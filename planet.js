@@ -3,6 +3,11 @@ let filmsUl;
 let charactersSpan;
 let climateSpan;
 let popSpan;
+let diamSpan;
+let gravitySpan;
+let orbSpan;
+let terrainSpan;
+let rotSpan;
 const baseURL = `http://localhost:9001/api`;
 
 addEventListener('DOMContentLoaded', () => {
@@ -11,6 +16,11 @@ addEventListener('DOMContentLoaded', () => {
     charactersSpan = document.querySelector('#characters span');
     climateSpan = document.querySelector('span#climate');
     popSpan = document.querySelector('span#population');
+    diamSpan = document.querySelector('span#diameter');
+    gravitySpan = document.querySelector('span#gravity');
+    orbSpan = document.querySelector('span#orbital-period');
+    rotSpan = document.querySelector('span#rotation-period')
+    terrainSpan = document.querySelector('span#terrain');
     const sp = new URLSearchParams(window.location.search);
     const id = sp.get('id');
     getPlanet(id);
@@ -26,7 +36,6 @@ async function getPlanet(id) {
     catch (ex) {
         console.error(`Error reading planet ${id} data: `, ex.message);
     }
-    console.log("Planet data: ", planet);
     renderPlanet(planet);
 }
 
@@ -37,7 +46,7 @@ async function fetchPlanet(id) {
 }
 
 async function fetchCharacters(planet) {
-    let url = `${baseURL}/characters/${planet.id}`;
+    let url = `${baseURL}/planets/${planet.id}/characters`;
     const characters = await fetch(url)
     .then(res => res.json());
     return characters;
@@ -55,9 +64,16 @@ const renderPlanet = planet => {
     nameH1.textContent = planet?.name;
     climateSpan.textContent = planet?.climate;
     popSpan.textContent = planet?.population;
-    charactersSpan.innerHTML = `<a href="/character.html?id=${planet.characters.id}">${planet.characters.name}</a>`;
-        const filmsLis = planet.films.map(film => 
-        `<li><a href="/film.html?id=${film.id}">${film.title}</a></li>`);
-        filmsUl.innerHTML = filmsLis.join("");
+    diamSpan.textContent = planet?.diameter;
+    gravitySpan.textContent = planet?.gravity;
+    terrainSpan.textContent = planet?.terrain;
+    orbSpan.textContent = planet?.orbital_period;
+    rotSpan.textContent = planet?.rotation_period;
+    const characterLinks = planet.characters.map(char => 
+    `<a href="/character.html?id=${char.id}">${char.name}</a>`);
+    charactersSpan.innerHTML = characterLinks.join(", ");
+    const filmsLis = planet.films.map(film => 
+    `<li><a href="/film.html?id=${film.id}">${film.title}</a></li>`);
+     filmsUl.innerHTML = filmsLis.join("");
 
 };
